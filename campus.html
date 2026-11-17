@@ -146,8 +146,10 @@ svg.curve{width:100%;height:auto;display:block;margin:2px 0 6px}
 .line:hover,.line[aria-pressed="true"]{border-color:var(--c);background:var(--panel-2)}
 .line .bul{width:22px;height:22px;font-size:12.5px}
 .line b{font:700 15.5px/1.2 var(--f-display)}
-.line .rt{grid-column:2;font:500 11px var(--f-mono);color:var(--c);letter-spacing:.02em}
-.line .wy{grid-column:2;font-size:12px;line-height:1.36;color:var(--paper);opacity:.86}
+.line .pr{grid-column:2;font-size:12px;line-height:1.35}
+.line .pr em{display:block;font:500 10.5px/1.3 var(--f-mono);font-style:normal;color:var(--c)}
+.line .wy{display:none;margin:3px 0 4px;color:var(--paper);opacity:.82}
+.line[aria-pressed="true"] .wy{display:block}
 
 /* intro + hint + toast */
 #intro{position:absolute;left:var(--gl);bottom:max(18px, env(safe-area-inset-bottom, 0px));width:min(400px,calc(100% - var(--gl) - var(--gr)));background:var(--panel);border:1px solid var(--rule);border-radius:16px;padding:18px}
@@ -228,7 +230,7 @@ svg.curve{width:100%;height:auto;display:block;margin:2px 0 6px}
   </aside>
 
   <section id="intro">
-    <p class="lead">Ten places on the Hill. Each one is where your mind misreads the people around you.</p>
+    <p class="lead">Thirteen places on the Hill. Each one is where your mind misreads the people around you.</p>
     <div class="row">
       <button class="btn primary" id="i-tour" type="button">Follow one freshman's semester</button>
       <button class="btn" id="i-roam" type="button">Explore freely</button>
@@ -270,7 +272,7 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const LINES={
   ego:{n:'1',name:"It's all about me",color:'#ffb238'},
   room:{n:'2',name:'Misreading the room',color:'#4fd1d9'},
-  reel:{n:'3',name:'Other people as the yardstick',color:'#ff6fa8'},
+  reel:{n:'3',name:'The pull of other people',color:'#ff6fa8'},
   attr:{n:'4',name:'Reading other minds',color:'#a98dfb'},
   us:{n:'5',name:'Us vs. them',color:'#ff5a4d'},
   like:{n:'6',name:'Why we like each other',color:'#7ddc6b'}
@@ -281,9 +283,9 @@ const EDGES=[
   {a:'barton',b:'bailey',line:'ego',lt:.5,short:'"Everyone is like me" meets "I am the only one"',
    why:"False consensus to pluralistic ignorance. Opposite errors with one cause: you have only your own head to consult and other people's public behavior to go on."},
   {a:'ctown',b:'bailey',line:'room',lt:.3,short:'Following a norm nobody holds',
-   why:"Conformity to pluralistic ignorance. We go along with what everyone seems to want, and everyone is only seeming. Prentice and Miller's students drank to match a comfort level almost none of them felt."},
+   why:"Conformity to pluralistic ignorance. We go along with what everyone seems to want, and seems is the catch. Prentice and Miller's students believed the average student was more comfortable with drinking than they were, so the norm they felt pressure to match was partly an illusion."},
   {a:'bailey',b:'slope',line:'room',lt:.2,short:'Calm faces mean "no emergency"',
-   why:"Pluralistic ignorance drives the bystander effect. On the icy Slope, each person reads the others' calm as proof that nothing is wrong (Latané & Darley, 1968)."},
+   why:"Pluralistic ignorance is one cause of the bystander effect. On the icy Slope, each person reads the others' calm as proof that nothing is wrong (Latané & Darley, 1968). The other cause is diffusion of responsibility: with twenty people there, helping feels like someone else's job."},
   {a:'barton',b:'ctown',line:'reel',two:true,lt:.5,short:'When unsure, look sideways',
    why:"Social comparison and conformity both make other people the measuring stick. One uses them to judge how we are doing, the other to decide what to do."},
   {a:'straight',b:'bridge',line:'attr',two:true,lt:.72,short:'Wrong cause, both times',
@@ -292,6 +294,18 @@ const EDGES=[
    why:"Effort justification to in-group bias. A hard initiation has to be justified, and the easiest justification is that the group is wonderful."},
   {a:'quad',b:'straight',line:'us',lt:.36,short:'Their flaws are character. Ours are bad luck.',
    why:"In-group bias bends attribution. An out-group's failure is who they are, ours is circumstance. Pettigrew (1979) called it the ultimate attribution error."},
+  {a:'field',b:'barton',line:'ego',lt:.5,short:'I see it as it is, so everyone must agree',
+   why:"Naive realism to false consensus. If your view feels like plain reality, you expect most reasonable people to share it, and you overestimate how many do."},
+  {a:'duffield',b:'ho',line:'ego',lt:.5,short:'What is vivid to me looms large',
+   why:"Availability to the spotlight effect. Your own work and your own coffee stain are the easiest things for you to call to mind, so you assume they loom as large for everyone else."},
+  {a:'quad',b:'field',line:'us',lt:.5,short:'Same game, two different games',
+   why:"In-group bias feeds naive realism. Which side you are on shapes what you see, and what you see then feels like proof that your side was right."},
+  {a:'uris',b:'straight',line:'attr',lt:.5,short:'We forget the situation',
+   why:"Situationism to the fundamental attribution error. Milgram's results shock us for the same reason we call the friend who did not text back flaky: we underestimate what situations do to people."},
+  {a:'ctown',b:'uris',line:'reel',two:true,lt:.5,short:'Peers push, authority pushes',
+   why:"Conformity and obedience are both social influence. In Asch's room the pressure came from equals, in Milgram's lab from someone in charge, and in both most people went along at least part of the way."},
+  {a:'mcgraw',b:'bridge',line:'like',two:true,lt:.5,short:'Liking with a hidden source',
+   why:"Mere exposure and misattributed arousal both produce attraction for reasons that have little to do with the person: one from familiarity, the other from a pounding heart."},
   {a:'north',b:'mcgraw',line:'like',lt:.42,short:'Nearby means seen often',
    why:"Propinquity works largely through mere exposure. The people down the hall are simply the people you see most, and familiar things grow on you."}
 ];
@@ -305,7 +319,7 @@ bailey:{name:'Bailey Hall',line:'ego',concept:'Pluralistic ignorance',
   study:{cite:'Miller & McFarland (1987)',text:"Students read a deliberately incomprehensible article and were told they could ask the experimenter for help. Nobody did. Afterward they rated the others as understanding it better than they had. Their reasoning: I stayed quiet out of embarrassment, they stayed quiet because they got it."},
   study2:{cite:'Prentice & Miller (1993)',text:"Princeton students rated their own comfort with campus drinking, then the average student's.",
     viz:{t:'bars',max:11,items:[['Me',5.3,'5.3'],['“The average student”',7.0,'7.0',1]],note:'Comfort on a 1–11 scale. Most students thought they were the uneasy exception.'}},
-  tip:"Ask the question. If you are lost, a third of the room is too, and one of them will thank you after class.",
+  tip:"Ask the question. If you are lost, you are almost certainly not the only one, and someone will thank you after class.",
   pos:[22,-18],mh:13,rad:8,cam:[.75,1.05,40]},
 ho:{name:'Ho Plaza',line:'ego',concept:'Spotlight effect',
   one:"We badly overestimate how much other people notice us, because we are the center of our own attention.",
@@ -334,8 +348,7 @@ barton:{name:'Barton Hall',line:'reel',concept:'Social comparison',also:'and the
          ['In the consulting line','think','Obviously everyone here wants this job. Who wouldn’t?']],
   study:{cite:'Festinger (1954); Medvec, Madey & Gilovich (1995)',text:"Festinger proposed that we evaluate ourselves by comparison. Olympic footage shows how much the comparison matters: silver medalists look up at gold, bronze medalists look down at no medal at all.",
     viz:{t:'bars',max:10,items:[['Silver medalists',4.8,'4.8',1],['Bronze medalists',7.1,'7.1']],note:'Judged happiness right after the event (1 = agony, 10 = ecstasy).'}},
-  study2:{cite:'Ross, Greene & House (1977), the “Eat at Joe’s” study',text:"Students were asked to walk around campus wearing a sandwich board that said “Eat at Joe’s.” Whatever they chose, they assumed most other students would choose the same.",
-    viz:{t:'bars',max:100,items:[['Those who agreed',62,'62%'],['Those who refused',33,'33%',1]],note:'Each group’s estimate of how many other students would agree to wear the sign.'}},
+  study2:{cite:'Ross, Greene & House (1977), the “Eat at Joe’s” study',text:"Students were asked to walk around campus wearing a sandwich board that said “Eat at Joe’s.” Those who agreed thought most other students would agree too. Those who refused thought most others would refuse. Each group saw its own choice as the common one."},
   tip:"Choose your comparisons on purpose. And before assuming everyone wants what you want, ask one person who is not in your line.",
   pos:[19,24],mh:13,rad:13,cam:[.6,1.05,48]},
 ctown:{name:'Collegetown',line:'reel',concept:'Conformity',also:'and descriptive norms',
@@ -356,7 +369,7 @@ slope:{name:'Libe Slope',line:'us',concept:'Effort justification',also:'cognitiv
          ['You','think','I did not go through all that for “fine.” This club is the best thing at Cornell.']],
   study:{cite:'Aronson & Mills (1959)',text:"Women joined a discussion group after a severe initiation (reading embarrassing words aloud), a mild one, or none. Then all of them heard the same deliberately dull discussion.",
     viz:{t:'bars',max:110,items:[['Severe initiation',97.6,'97.6'],['Mild initiation',81.8,'81.8',1],['No initiation',80.2,'80.2',1]],note:'How interesting they rated the discussion. Higher is better.'}},
-  study2:{cite:'Also on this hill: Latané & Darley (1968)',text:"First ice of the year. Someone slips halfway up and stays down. Twenty people glance at each other, see twenty calm faces, and keep walking. In the smoke-filled-room study, students filled out forms while smoke poured into the room.",
+  study2:{cite:'Also on this hill: Latané & Darley (1968)',text:"First ice of the year. Someone slips halfway up and stays down. Twenty people glance at each other, see twenty calm faces, and keep walking. In the smoke-filled-room study, students filled out forms while smoke poured into the room. A second cause works alongside this one. In Darley and Latané's seizure study, the more people who could have helped, the less each one felt it was up to them: diffusion of responsibility.",
     viz:{t:'bars',max:100,items:[['Alone',75,'75% reported it'],['With 2 calm others',10,'10%',1]],note:"Everyone read everyone else's calm as “no emergency.”"}},
   tip:"If you love something you suffered for, ask whether you would pick it again at half the price. And on the ice, be the first to stop. Everyone else is waiting for a cue.",
   pos:[-31,0],mh:8,rad:7,cam:[-1.0,1.12,46]},
@@ -370,7 +383,7 @@ quad:{name:'Arts Quad',line:'us',concept:'In-group bias',
   tip:"Notice how little it took to make an “us.” Then be suspicious of how sure you are about “them.”",
   pos:[-3,-12],mh:9,rad:11,cam:[.7,.95,48]},
 north:{name:'North Campus',line:'like',concept:'Propinquity',
-  one:"We become friends with the people we keep bumping into. Physical closeness predicts friendship better than similarity does.",
+  one:"We become friends with the people we keep bumping into. Who we end up close to depends heavily on who happens to be nearby.",
   beats:[['August · a North Campus dorm, third floor','','You plan to find your people in clubs, in seminars, anywhere interesting.'],
          ['December','','Your three closest friends live in rooms 304, 306 and 309. You are in 305.'],
          ['You','think','Did I choose them, or did the housing lottery?']],
@@ -388,6 +401,34 @@ mcgraw:{name:'McGraw Tower',line:'like',concept:'Mere exposure',
     viz:{t:'curve',note:'Shape of the result, not exact values.'}},
   tip:"Give new things ten tries before deciding you dislike them. That covers the dining hall, your roommate's music and Ithaca in February.",
   pos:[-15,3],mh:25,rad:8,cam:[.9,1.15,44]},
+uris:{name:'Uris Hall',line:'attr',concept:'The power of the situation',also:'and obedience to authority',
+  one:"Ordinary people do things they never expected of themselves when the situation pushes hard enough, and we consistently underestimate that push.",
+  beats:[['Week 6 · Uris Hall, a study for extra credit','say','“The experiment requires that you continue.”'],
+         ['You, forty minutes past the hour','think','This is pointless and I have class. But she has a clipboard.'],
+         ['You, back in lecture that afternoon','think','I would never have gone along in the Milgram study.']],
+  study:{cite:'Milgram (1963, 1974)',text:"Volunteers were told to give a stranger stronger and stronger electric shocks each time he missed a word pair. The shocks were fake, but the volunteers did not know that. Almost nobody was expected to go to the end. About two thirds went all the way to 450 volts. Milgram's lesson was about the situation: an authority who seemed legitimate, small steps, and no obvious moment to stop."},
+  study2:{cite:'Liberman, Samuels & Ross (2002)',text:"Students played the same prisoner's dilemma game under one of two names. When it was called the Community Game, most cooperated. When it was called the Wall Street Game, most did not. The name of the game predicted what they did. Their reputation as cooperative or competitive people did not."},
+  tip:"When you are sure you would have behaved better, ask what the situation was doing. Then decide your limit before you walk in, because it is hard to find one halfway through.",
+  pos:[38,-3],mh:11,rad:7,cam:[.6,1.0,40]},
+field:{name:'Schoellkopf Field',line:'us',concept:'Naive realism',also:'the objectivity illusion',
+  one:"We feel that we see the world as it is. So anyone who sees it differently must be biased, uninformed or unreasonable.",
+  beats:[['Homecoming · Schoellkopf Field','','Fourth quarter. The referee throws a flag on Cornell.'],
+         ['The Crescent, in red','say','“That ref is blind. That was a clean hit!”'],
+         ['The visitors’ side, in green','say','“Finally. They have been getting away with that all game.”']],
+  study:{cite:'Hastorf & Cantril (1954), “They Saw a Game”',text:"After a rough Princeton–Dartmouth football game, students from each school watched the same film and counted the infractions. Each side saw the other team commit more of them. Nobody was lying. They watched one film and saw two different games."},
+  study2:{cite:'Vallone, Ross & Lepper (1985)',text:"Pro-Israeli and pro-Arab students watched identical news coverage and each group judged it biased against their own side. If my view is simply how things are, a neutral account has to look slanted. George Carlin made the same point about driving: everyone slower than you is an idiot and everyone faster is a maniac."},
+  tip:"When someone's view strikes you as obviously biased, take it as a sign that the two of you are looking at different things, and ask what they are seeing.",
+  pos:[52,20],mh:10,rad:17,cam:[-.9,1.0,54]},
+duffield:{name:'Duffield Hall',line:'ego',concept:'Availability heuristic',also:'and the first-instinct fallacy',
+  one:"We judge how common or how large something is by how easily examples come to mind. Our own efforts come to mind most easily of all.",
+  beats:[['Week 11 · Duffield atrium, 1 a.m.','','The group project is due at 9. Four of you are still here.'],
+         ['Each of the four, privately','think','I have done at least half of this.'],
+         ['The arithmetic','','Four halves make two projects. Only one is getting turned in.']],
+  play:'shares',
+  study:{cite:'Tversky & Kahneman (1973)',text:"Asked whether more English words start with a certain letter or have it in the third position, people pick the first position, because words are easy to search by how they begin. Ease of recall stands in for frequency."},
+  study2:{cite:'Ross & Sicoly (1979)',text:"Married couples each estimated their own share of the housework, and the two shares added up to more than 100 percent. They were not bragging. Their own contributions were simply easier to remember. The same heuristic props up the rule that you should never change a first answer on a prelim: the switch that went wrong is the one you remember, while studies of answer changing find that most switches go from wrong to right."},
+  tip:"Before you resent your teammates, write down what each of them did. And on a prelim, if you have a reason to change an answer, change it.",
+  pos:[-3,30],mh:10,rad:8,cam:[.4,1.02,38]},
 bridge:{name:'Suspension bridge',line:'attr',concept:'Misattribution of arousal',egg:true,
   one:"A racing heart does not come labeled. We look around for a cause and sometimes pick the wrong one.",
   beats:[['Hidden station · the footbridge over Fall Creek','','The bridge sways. The gorge is a long way down. Your heart is pounding.'],
@@ -398,8 +439,8 @@ bridge:{name:'Suspension bridge',line:'attr',concept:'Misattribution of arousal'
   tip:"Before you trust a strong feeling, check what else is revving your pulse: caffeine, a prelim, or a long drop into a gorge.",
   pos:[-24,-40.5],mh:8,rad:5,cam:[-1.25,1.12,36]}
 };
-const TOUR=[['bailey','Week 1','fall'],['ho','Week 2','fall'],['quad','Week 3','fall'],['ctown','Week 5','fall'],['straight','Week 7','fall'],
-            ['barton','Week 9','fall'],['slope','Prelim season','winter'],['north','December','winter'],['mcgraw','May','spring']];
+const TOUR=[['bailey','Week 1','fall'],['ho','Week 2','fall'],['quad','Week 3','fall'],['ctown','Week 5','fall'],['uris','Week 6','fall'],['straight','Week 7','fall'],
+            ['field','Homecoming','fall'],['barton','Week 9','fall'],['duffield','Week 11','fall'],['slope','Prelim season','winter'],['north','December','winter'],['mcgraw','May','spring']];
 
 /* ---------- terrain maths ---------- */
 const sst=(a,b,x)=>{let t=(x-a)/(b-a);t=t<0?0:t>1?1:t;return t*t*(3-2*t)};
@@ -517,6 +558,7 @@ function filler(x,z,w,h,d,m,gab){const y=hgt(x,z);const g=new THREE.Group();g.po
 // Arts Quad surrounds
 filler(11,-11,5,4.6,16,stone,1.8);filler(-17,-21,4.4,4.6,6.5,stone2,1.6);filler(-17,-13,4.4,4.6,6.5,stone,1.6);filler(-17,-5,4.4,4.6,6.5,stone2,1.6);
 {const g=filler(-3,-28,15,4.2,4,stone,1.4);const dm=sh(new THREE.Mesh(new THREE.SphereGeometry(2,10,6,0,6.283,0,1.571),mat('#8fa39a')));dm.position.y=5.2;g.add(dm)}
+const groups={};
 // ---- real Cornell landmarks ----
 const conc=mat('#d2ccbf'),glass=new THREE.MeshStandardMaterial({color:'#31404f',roughness:.15,metalness:.4}),carn=mat('#b31b1b'),turf=mat('#3f8a45'),rust=mat('#7a4a32'),redbrick=mat('#9a4b3c',{map:brickTex});
 function lm(x,z,r){const g=new THREE.Group();g.position.set(x,hgt(x,z),z);world.add(g);occ.push([x,z,r]);return g}
@@ -538,8 +580,11 @@ filler(11,-24.5,5,4.6,5.5,stone2,1.8);filler(11,.5,5,4.6,5,stone,1.8);
 // Bradfield Hall: the tall windowless brick tower at the east end of the Ag Quad
 {const g=lm(77,-23,6);box(g,5,21,5,redbrick,0,-4,0);box(g,5.3,.5,5.3,dark,0,17,0);box(g,9,8,6,redbrick,-2,-4,5.5);box(g,9.3,.4,6.3,dark,-2,4,5.5)}
 // Schoellkopf Field and the Crescent
-{const g=lm(52,20,17);box(g,13.6,.1,24,mat('#9c5b47'),0,0,0);box(g,11,.16,20,turf,0,0,0);box(g,11,.18,2,carn,0,0,-9);box(g,11,.18,2,carn,0,0,9);for(let i=-4;i<=4;i++)box(g,11,.19,.12,white,0,0,i*1.6);
-  for(let i=0;i<9;i++){const a=(-40+i*10)*Math.PI/180,sg=new THREE.Group();sg.position.set(-7.5+Math.cos(a)*17,0,Math.sin(a)*17);sg.rotation.y=-a;for(let k=0;k<4;k++){box(sg,1.5,1.3+k*1.5,3.4,conc,k*1.5,0,0);box(sg,1.3,.15,3.2,carn,k*1.5,1.3+k*1.5,0)}g.add(sg)}}
+{const g=station('field'),grn=mat('#1f7a3f');for(let i=0;i<10;i++)person(g,-7.6,0,-6.5+i*1.45,grn);box(g,13.6,.1,24,mat('#9c5b47'),0,0,0);box(g,11,.16,20,turf,0,0,0);box(g,11,.18,2,carn,0,0,-9);box(g,11,.18,2,carn,0,0,9);for(let i=-4;i<=4;i++)box(g,11,.19,.12,white,0,0,i*1.6);
+  for(let i=0;i<9;i++){const a=(-40+i*10)*Math.PI/180,sg=new THREE.Group();sg.position.set(-7.5+Math.cos(a)*17,0,Math.sin(a)*17);sg.rotation.y=-a;for(let k=0;k<4;k++){box(sg,1.5,1.3+k*1.5,3.4,conc,k*1.5,0,0);box(sg,1.3,.15,3.2,carn,k*1.5,1.3+k*1.5,0);if(k)person(sg,k*1.5,1.45+k*1.5,(rnd()-.5)*2.2,carn)}g.add(sg)}}
+// Uris Hall (psychology) and Duffield Hall
+{const g=station('uris');box(g,8,9,7,rust,0,-4,0);box(g,8.3,.4,7.3,dark,0,5,0);for(let k=0;k<3;k++)box(g,8.1,.55,7.1,glass,0,1+k*1.4,0);person(g,-1,0,4.4,white);person(g,.4,0,4.7)}
+{const g=station('duffield');box(g,10,8.5,5,conc,0,-4,0);box(g,10.4,.4,5.4,dark,0,4.5,0);box(g,10.1,2.6,5.1,glass,0,1,0);box(g,4,7.5,4.4,glass,6.6,-4,.4);box(g,4.3,.3,4.7,dark,6.6,3.5,.4);for(let i=0;i<4;i++)person(g,-2+i*.9,0,3.3+(i%2)*.5)}
 // War Memorial towers on West Campus
 {const g=lm(-47,3,6);for(const e of[-1,1]){box(g,3,13,3,stone,0,-4,e*4.2);pyr(g,2.4,2.8,slate,0,9,e*4.2)}box(g,2,8,6,stone2,0,-4,0)}
 // Risley, Donlon, Beebe dam and Triphammer Falls
@@ -547,7 +592,7 @@ filler(11,-24.5,5,4.6,5.5,stone2,1.8);filler(11,.5,5,4.6,5,stone,1.8);
 {const g=lm(36,-67,9);for(let i=0;i<3;i++){const w=new THREE.Group();w.rotation.y=i*2.094;box(w,3,13,8,conc,0,-4,4.5);for(let k=0;k<4;k++)box(w,3.1,.7,7.6,glass,0,1.2+k*2,4.5);g.add(w)}}
 box(world,1.3,8,9.5,stone,23,-10,fzc(23));{const f=new THREE.Mesh(new THREE.BoxGeometry(.4,6.6,5.5),foam);f.position.set(22.2,-5.6,fzc(23));world.add(f)}
 // the rest of campus
-[[-3,30,9,4,5,stone2,0],[24,11,6,8,5,ashlar('#d8d2c4'),0],[38,14,5,13,6,ashlar('#cfc8ba'),0],[38,-3,7,5,7,rust,0],[36,-22,5,4.5,10,brick,1.6],
+[[24,11,6,8,5,ashlar('#d8d2c4'),0],[38,14,5,13,6,ashlar('#cfc8ba'),0],[36,-22,5,4.5,10,brick,1.6],
   [50,-22,10,5,5,brick,1.6],[62,-22,10,5,5,stone,1.6],[50,-4,10,5,5,stone,1.6],[62,-4,10,5,5,brick,1.6],[71,-13,5,5,12,stone2,0],
   [-50,12,9,4,5,stone,1.8],[-53,22,9,4,5,stone2,1.8],[-49,32,8,4,5,stone,1.8],[-55,-8,9,4,5,stone2,1.8],[-47,-18,7,4,5,stone,1.8],[-59,3,8,5,5,brick,0],[-61,26,8,5,5,brick,0],
   [26,-58,12,5,5,brick,1.6],[21,-47.5,9,4.5,4,stone,1.8],[0,-72,12,4.5,5,stone2,0],[-14,-68,8,4,5,stone,1.6],[40,-56,8,4,6,stone2,1.6],[22,-80,5,12,5,brick,0],[32,-86,5,12,5,brick,0],[8,-84,10,4,5,brick,0],
@@ -559,7 +604,6 @@ box(world,1.3,8,9.5,stone,23,-10,fzc(23));{const f=new THREE.Mesh(new THREE.BoxG
   hs.forEach((h,i)=>{const y=hgt(h[0],h[1]);q.setFromAxisAngle(v.set(0,1,0),h[2]);m4.compose(v.set(h[0],y+1.2*h[3],h[1]),q,sv.set(1,h[3],1));bm.setMatrixAt(i,m4);bm.setColorAt(i,ic.set(pal[i%6]));q.setFromAxisAngle(v.set(0,1,0),h[2]+.785);m4.compose(v.set(h[0],y+2.4*h[3]+.85,h[1]),q,sv.set(1,1,1));rm.setMatrixAt(i,m4)});
   bm.receiveShadow=rm.receiveShadow=true;if(bm.instanceColor)bm.instanceColor.needsUpdate=true;scene.add(bm,rm)}
 
-const groups={};
 function station(id){const s=ST[id],g=new THREE.Group();g.position.set(s.x,s.y,s.z);g.userData.sid=id;world.add(g);groups[id]=g;occ.push([s.x,s.z,s.rad]);return g}
 // McGraw Tower + Uris
 {const g=station('mcgraw');box(g,2.8,19,2.8,stone,0,-3,0);box(g,3.3,.5,3.3,stone2,0,16,0);box(g,3.1,2.6,3.1,white,0,16.5,0);
@@ -714,7 +758,7 @@ function flyTo(p,dur,done,path){if(reduce)dur=.01;const f={a:Object.assign({},ca
   let d=f.b.th-f.a.th;d=((d+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;f.b.th=f.a.th+d;fly=f;auto=false;grounded=false;vel.x=vel.z=0}
 const LW=()=>Math.max(280,Math.min(380,W*.3));
 function poseOf(id){const s=ST[id];return{tx:s.x,ty:s.y+3.5,tz:s.z,th:s.cam[0],ph:s.cam[1],r:s.cam[2]*(W<760?1.25:1)}}
-function connPose(){const wide=W>=760&&W>H*1.05;return wide?{tx:-3,ty:0,tz:1,th:Math.PI/2,ph:.34,r:Math.max(118,150*H/((W-LW()-70)*.768))}:{tx:-4,ty:0,tz:10,th:0,ph:.26,r:Math.min(330,Math.max(270,78/(.768*W/H)))}}
+function connPose(){const wide=W>=760&&W>H*1.05;return wide?{tx:15,ty:0,tz:1,th:Math.PI/2,ph:.34,r:Math.max(132,150*H/((W-LW()-70)*.768))}:{tx:8,ty:0,tz:10,th:0,ph:.26,r:Math.min(330,Math.max(270,78/(.768*W/H)))}}
 function applyCam(){const sp=Math.sin(cam.ph);camera.position.set(cam.tx+cam.r*sp*Math.sin(cam.th),cam.ty+cam.r*Math.cos(cam.ph),cam.tz+cam.r*sp*Math.cos(cam.th));camera.lookAt(cam.tx,cam.ty,cam.tz);
   if(Math.abs(vo.x)>.5||Math.abs(vo.y)>.5)camera.setViewOffset(W,H,vo.x,vo.y,W,H);else camera.clearViewOffset()}
 function resize(){W=app.clientWidth||1;H=app.clientHeight||1;renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.setSize(W,H,false);if(composer){composer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));composer.setSize(W,H)}camera.aspect=W/H;camera.updateProjectionMatrix();offsets();
@@ -755,6 +799,7 @@ function playHTML(k){
   if(k==='party'){const p=[['Dancing on the couch','I said I was staying in. Then the group chat happened.'],['Laughing by the speaker','I only came because my whole floor did.'],['Scrolling in the corner','I have a problem set due at 9. Nobody else seemed worried.'],['Telling a loud story','If I had stayed home I would have been the only one.'],['Leaning in the doorway','Does anyone here actually want to be here?']];
     return'<section class="play"><p class="q">Five people at the party that “everyone” wanted to go to. Select one to hear why they came.</p><div class="sil">'+p.map((a,i)=>'<button type="button" id="sil-'+i+'" aria-expanded="false"><i></i><span><b>'+a[0]+'</b><em>“'+a[1]+'”</em></span></button>').join('')+'</div></section>'}
   if(k==='chimes')return'<section class="play"><p class="q">Run the experiment on yourself. Play the chimes again and watch what repetition does.</p><div class="row"><button class="btn primary" id="chime-go" type="button">Ring the chimes</button><span id="chime-n" style="font:500 12.5px var(--f-mono)">heard 0 times</span></div><div class="bars" style="margin-top:12px"><div class="bar"><span id="chime-mood">“Who approved this.”</span><div class="t"><div class="f" id="chime-bar" style="width:8%"></div></div></div></div></section>';
+  if(k==='shares')return'<section class="play"><p class="q">Ask each of the four teammates, separately, what share of the project they did.</p><button class="btn primary" id="shares-go" type="button">Ask all four</button><div id="shares-res" hidden></div></section>';
   return''}
 function render(id){const s=ST[id],L=LINES[s.line];const ti=TOUR.findIndex(t=>t[0]===id);
   const myLines=[...new Set(EDGES.filter(e=>e.a===id||e.b===id).map(e=>e.line))];
@@ -773,6 +818,7 @@ function wire(id){
     r.innerHTML=bars({max:100,items:[['Your guess',g,g+'%'],['Wearers guessed',46,'46%',1],['Actually noticed',23,'23%',1]]})+'<p class="after">'+(g>30?'You overshot, like nearly everyone in the study. The wearers guessed twice the real number.':'Close. You are harder to fool than the people in the study, who guessed twice the real number.')+'</p>';r.hidden=false;gr.disabled=true;$('#guess-go').disabled=true})}
   const hg=$('#hands-go');if(hg)hg.addEventListener('click',()=>{pBody.querySelectorAll('.seat').forEach((s,i)=>setTimeout(()=>s.classList.add('show'),reduce?0:i*260));setTimeout(()=>{$('#hands-res').hidden=false},reduce?0:2100);hg.disabled=true});
   pBody.querySelectorAll('.sil button').forEach(b=>b.addEventListener('click',()=>b.setAttribute('aria-expanded',String(b.getAttribute('aria-expanded')!=='true'))));
+  const sg=$('#shares-go');if(sg)sg.addEventListener('click',()=>{const r=$('#shares-res');r.innerHTML=bars({max:100,items:[['You',50,'50%'],['Teammate 2',45,'45%',1],['Teammate 3',40,'40%',1],['Teammate 4',55,'55%',1]]})+'<p class="after">That is 190 percent of one project. These numbers are made up, but the pattern is the finding: everyone remembers their own late nights and nobody else’s.</p>';r.hidden=false;sg.disabled=true});
   const cg=$('#chime-go');if(cg){let n=0;const moods=[[0,'“Who approved this.”'],[2,'“It is fine, I guess.”'],[4,'“Kind of nice, actually.”'],[7,'“That is my song.”'],[10,'“I will miss these.”']];
     cg.addEventListener('click',()=>{n++;chime();$('#chime-n').textContent='heard '+n+(n===1?' time':' times');$('#chime-bar').style.width=Math.min(100,8+27*Math.log2(1+n))+'%';let m=moods[0][1];moods.forEach(a=>{if(n>=a[0])m=a[1]});$('#chime-mood').textContent=m})}
 }
@@ -784,7 +830,7 @@ function syncUI(){
   document.querySelectorAll('.line').forEach(b=>b.setAttribute('aria-pressed',String(state.line===b.dataset.l)));
   EDGES.forEach(e=>e.el.classList.toggle('show',state.conn&&state.line===e.line));
   for(const k in ST){const on=state.conn&&!!state.line&&EDGES.some(e=>e.line===state.line&&(e.a===k||e.b===k));ST[k].el.classList.toggle('hl',on);ST[k].el.classList.toggle('fade',state.conn&&!!state.line&&!on)}
-  $('#help').hidden=!intro.hidden||helpOff;offsets()}
+  $('#help').hidden=!intro.hidden||helpOff||state.conn;offsets()}
 function open(id,noFly){intro.hidden=true;state.active=id;state.edge=null;if(state.conn){state.conn=false;state.line=null;env.nT=0;setHash('')}
   render(id);panel.hidden=false;syncUI();if(!noFly)flyTo(poseOf(id),1.7)}
 function pick(id){if(state.tour>=0){const i=TOUR.findIndex(t=>t[0]===id);if(i>=0){state.tour=i;setSeason(TOUR[i][2])}else state.tour=-1}open(id)}
@@ -796,8 +842,8 @@ function setHash(h){try{history.replaceState(null,'',h?'#'+h:location.pathname+l
 function enterConn(msg){intro.hidden=true;panel.hidden=true;state.active=null;state.edge=null;state.tour=-1;state.conn=true;env.nT=1;syncUI();flyTo(connPose(),2);setHash('connections');if(msg)say(msg)}
 function exitConn(){state.conn=false;state.line=null;env.nT=0;syncUI();flyTo(HOME,1.8);setHash('')}
 function selectLine(l){state.line=state.line===l?null:l;syncUI()}
-$('#lines').innerHTML=Object.keys(LINES).map(k=>{const L=LINES[k],es=EDGES.filter(e=>e.line===k);const nm=id=>({'ego:barton':'False consensus effect','room:slope':'Bystander effect'})[k+':'+id]||ST[id].concept;let rt=nm(es[0].a);es.forEach(e=>{rt+=(e.two?' ↔ ':' → ')+nm(e.b)});
-  return'<button class="line" type="button" id="line-'+k+'" data-l="'+k+'" aria-pressed="false" style="--c:'+L.color+'"><span class="bul">'+L.n+'</span><b>'+L.name+'</b><span class="rt">'+rt+'</span>'+es.map(e=>'<span class="wy">'+e.why+'</span>').join('')+'</button>'}).join('');
+$('#lines').innerHTML=Object.keys(LINES).map(k=>{const L=LINES[k],es=EDGES.filter(e=>e.line===k);const nm=id=>({'ego:barton':'False consensus effect','room:slope':'Bystander effect','attr:uris':'Situationism','reel:uris':'Obedience to authority'})[k+':'+id]||ST[id].concept;
+  return'<button class="line" type="button" id="line-'+k+'" data-l="'+k+'" aria-pressed="false" style="--c:'+L.color+'"><span class="bul">'+L.n+'</span><b>'+L.name+'</b>'+es.map(e=>'<span class="pr"><em>'+nm(e.a)+(e.two?' ↔ ':' → ')+nm(e.b)+'</em>'+e.short+'<span class="wy">'+e.why+'</span></span>').join('')+'</button>'}).join('');
 document.querySelectorAll('.line').forEach(b=>b.addEventListener('click',()=>selectLine(b.dataset.l)));
 $('#p-close').addEventListener('click',()=>{closePanel();flyTo({r:Math.max(cam.r,70),ph:Math.min(cam.ph,1.02)},1.2)});
 $('#b-conn').addEventListener('click',()=>state.conn?exitConn():enterConn());
